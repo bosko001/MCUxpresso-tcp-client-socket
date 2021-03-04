@@ -20,7 +20,6 @@ RM := rm -rf
 -include lwip/src/core/subdir.mk
 -include lwip/src/api/subdir.mk
 -include lwip/port/subdir.mk
--include lwip/doc/subdir.mk
 -include lwip/contrib/apps/tcpecho/subdir.mk
 -include freertos/freertos_kernel/portable/MemMang/subdir.mk
 -include freertos/freertos_kernel/portable/GCC/ARM_CM4F/subdir.mk
@@ -51,7 +50,7 @@ all: tcp-client-socket.axf
 tcp-client-socket.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"C:\Users\Bosko Lekovic\Documents\MCUXpressoIDE_11.3.0_5222\workspace\dnet\Debug" -Xlinker -Map="tcp-client-socket.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcp-client-socket_lwip_tcpecho_freertos_Debug.ld -o "tcp-client-socket.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"D:\Programming\posao\dnet\Debug" -Xlinker -Map="tcp-client-socket.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -Xlinker --sort-section=alignment -Xlinker --cref -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -T tcp-client-socket_lwip_tcpecho_freertos_Debug.ld -o "tcp-client-socket.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

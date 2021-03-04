@@ -36,5 +36,4 @@ phy \
 source \
 startup \
 utilities \
-lwip/doc \
 

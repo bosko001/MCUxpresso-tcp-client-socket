@@ -15,12 +15,8 @@
 
 #define BUFLEN 128
 
-static void
-udp_client_thread(void *arg)
+static void tcp_client_thread(void *arg)
 {
-	int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	assert(sock != -1);
-
 	struct sockaddr_in addr_server;
 	socklen_t slen = sizeof addr_server;
 
@@ -31,35 +27,47 @@ udp_client_thread(void *arg)
 
 	inet_aton("192.168.0.132", &addr_server.sin_addr);
 
-	int error = connect(sock, (struct sockaddr*)&addr_server, slen);
-	assert(error != -1);
-
 	char buf[BUFLEN];
 
-	for (int i = 1; ; ++i) {
-		sprintf(buf, "hello(%d)", i);
+	while (1)
+	{
+		int sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		assert(sock != -1);
 
-		int bytes_sent = send(sock, buf, strlen(buf), 0);
+		int error = connect(sock, (struct sockaddr*)&addr_server, slen);
+		assert(error != -1);
 
-		if (bytes_sent == -1) {
-			PRINTF("Failed to send data\n\r");
-			break;
+		PRINTF("Client - Connected\n\r");
+		for (int i = 1; ; ++i)
+		{
+			sprintf(buf, "hello(%d)", i);
+
+			int bytes_sent = send(sock, buf, strlen(buf), 0);
+
+			if (bytes_sent <= 0) {
+				PRINTF("Client - Failed to send data\n\r");
+				break;
+			}
+
+			PRINTF("Client - Sent %d bytes from: %s\n\r" , bytes_sent, buf);
+
+			int bytes_received = recv(sock, buf, BUFLEN, 0);
+			if (bytes_received <= 0) {
+				PRINTF("Client - Failed to receive response from server\n\r");
+				break;
+			}
+
+			PRINTF("Client - Server responded with: %s\n\r", buf);
+
+			vTaskDelay(2000);
 		}
 
-		PRINTF("Sent %d bytes from: %s\n\r" , bytes_sent, buf);
+		PRINTF("Client - Connection lost...\n\r");
+		PRINTF("Client - Reconnecting...\n\r");
 
-		int bytes_received = recv(sock, buf, BUFLEN, 0);
-		if (bytes_received == -1) {
-			PRINTF("Failed to receive response from server\n\r");
-			break;
-		}
-
-		PRINTF("Server responded with: %s\n\r", buf);
-
-		vTaskDelay(2000);
+		shutdown(sock, SHUT_RDWR);
+		close(sock);
 	}
-
-	close(sock);
 }
 /*-----------------------------------------------------------------------------------*/
 
@@ -76,7 +84,7 @@ int main(void)
 
     DnetConfig net_config = dnet_init("192.168.0.145", NULL, NULL, dnet_get_uid_location());
 
-    dnet_start_new_thread("udp_client_thread", udp_client_thread, NULL);
+    dnet_start_new_thread("tcp_client_thread", tcp_client_thread, NULL);
 
     vTaskStartScheduler();
 

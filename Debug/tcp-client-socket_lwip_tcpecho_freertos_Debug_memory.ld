@@ -6,7 +6,7 @@
  * Generated linker script file for MK64FN1M0xxx12
  * Created from memory.ldt by FMCreateLinkMemory
  * Using Freemarker v2.3.30
- * MCUXpresso IDE v11.3.0 [Build 5222] [2021-01-11] on Feb 21, 2021 6:50:29 PM
+ * MCUXpresso IDE v11.3.0 [Build 5222] [2021-01-11] on Mar 1, 2021 6:30:15 PM
  */
 
 MEMORY
